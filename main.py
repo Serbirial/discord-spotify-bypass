@@ -1,4 +1,5 @@
 import beautifuldiscord.app as bd
+from safe_asr import SafeASR
 from argparse import ArgumentParser
 import os
 import shutil
@@ -18,7 +19,6 @@ def inject_script(discord: bd.DiscordProcess, script: str) -> None:
   # to quote bd's repo: yikes
   final = script_file[:index] + script.encode('utf-8') + script_file[index:]
   open(discord.script_file, 'wb').write(final)
-  
 
 def main():
   # parse CLI arguments
@@ -42,14 +42,15 @@ def main():
   # close discord process before making changes
   discord.terminate()
 
-  if not bd.extract_asar():
+  if args.revert == True:
+    SafeASR.restore_backup() 
     discord.launch()
     return
 
-  if args.revert == True:
-    bd.revert_changes(discord)
+  if not SafeASR.extract_asr():
+    discord.launch()
     return
-  
+
   # inject xhr.js script
   inject_script(discord, xhr_script(cwd))
 
