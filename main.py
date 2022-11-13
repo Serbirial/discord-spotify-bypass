@@ -1,9 +1,7 @@
 import beautifuldiscord.app as bd
 from safe_asr import SafeASR
 from argparse import ArgumentParser
-import os
-import shutil
-import textwrap
+import os, shutil, textwrap
 
 def xhr_script(cwd: str) -> str:
   load_script = open(f'{cwd}/scripts/load-script.js', 'r').read()
