@@ -1,3 +1,3 @@
 mainWindow.webContents.on('dom-ready', function() {
-  mainWindow.webContents.executeJavaScript("{}")
+  mainWindow.webContents.executeJavaScript(`{}`)
 })

@@ -2,6 +2,23 @@ import beautifuldiscord.app as bd
 from argparse import ArgumentParser
 import os
 import shutil
+import textwrap
+
+def xhr_script(cwd: str) -> str:
+  load_script = open(f'{cwd}/scripts/load-script.js', 'r').read()
+  xhr = open(f'{cwd}/scripts/xhr.js').read()
+  return load_script.replace('{}',
+    '\n' + textwrap.indent(xhr, ' ' * 4))
+
+def inject_script(discord: bd.DiscordProcess, script: str) -> None:
+  # TODO: accomplish script injection using text r/w instead of binary
+  script_file = open(discord.script_file, 'rb').read()
+  # get injection index
+  index = script_file.index(b'mainWindow.on(\'blur\'')
+  # to quote bd's repo: yikes
+  final = script_file[:index] + script.encode('utf-8') + script_file[index:]
+  open(discord.script_file, 'wb').write(final)
+  
 
 def main():
   # parse CLI arguments
@@ -34,18 +51,14 @@ def main():
     return
   
   # inject xhr.js script
-  load_script = open(f'{cwd}/scripts/load-script.js', 'r').read()
-  xhr = open(f'{cwd}/scripts/xhr.js', 'r').read()
-  load_xhr = load_script.replace('{}', xhr)
-  print(load_xhr)
+  inject_script(discord, xhr_script(cwd))
 
   # repack app.asar
   bd.repack_asar()
 
+  print('script injection was successful')
+
   # relaunch discord
   discord.launch()
-
-  
-
 
 main()
