@@ -1,5 +1,5 @@
-# discord-spotify-bypass
 Discord has currently patched this, if you want to unpatch it make a PR, if not, wait for an update.
+# discord-spotify-bypass
 Script to bypass Discord pausing Spotify in calls.
 
 ## Dependencies
